@@ -15,6 +15,7 @@
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>inria_calib_interfaces</exec_depend>
   <exec_depend>prl_ur5_robot_configuration</exec_depend>
+  <exec_depend>calib_orchestrator</exec_depend>
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>python3-yaml</exec_depend>

@@ -43,10 +43,9 @@ calib_orchestrator:
     ik_timeout_s: 0.05
     max_samples_per_pose: 50
 
-    # MC-Calib
+    # MC-Calib (mc_calib_config: launch argument)
     data_root: /home/ros/share/calib_sessions
     mc_calib_binary: mc_calib_calibrate   # on the PATH (prl_docker mantis image)
-    mc_calib_config: /home/ros/share/mantis_ws/src/prl_camera_calib/calib_orchestrator/config/MC_Calib/calib_param_cube_femto.yml
     intrinsics_init: ""            # "" = <session>/factory_intrinsics.yml
     # MC-Calib order: Cam_001 golf, Cam_002 foxtrot, Cam_003 echo (same as camera_rig names)
     camera_frames: [golf_camera_color_optical_frame, foxtrot_camera_color_optical_frame, echo_camera_color_optical_frame]
@@ -57,8 +56,7 @@ calib_orchestrator:
     cube_frame: left_gripper_calib_tool_cube
     cube_board_axes: "0:-y,1:+y,2:+z,3:+x,4:-x"   # outward axis of each board in cube_frame
 
-    # result in the prl_ur5_robot_configuration fixed_cameras format
-    fixed_cameras_template: /home/ros/share/mantis_ws/src/prl_ur5_robot_configuration/config/fixed_cameras/dataset_collection.yaml
+    # result in the prl_ur5_robot_configuration fixed_cameras format (template: launch argument)
     fixed_cameras_out: ""          # set to the template path to update the robot configuration directly
 
     # quality report after the hand-eye: <session>/evaluation.txt|json

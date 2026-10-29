@@ -218,13 +218,22 @@ Exit code 1 on FAIL, `--json report.json` to save the report.
 | `velocity_scaling`, `acceleration_scaling` | MoveIt scaling |
 | `payload_mass`, `payload_cog` | payload of the arm carrying the cube (kg, m in the flange frame), set on the UR before each calibration; 0 = not set |
 | `execution_retries` | retries after `CONTROL_FAILED` |
-| `mc_calib_binary`, `mc_calib_config` | MC-Calib binary (`mc_calib_calibrate` on the PATH) and config template |
+| `mc_calib_binary` | MC-Calib binary (`mc_calib_calibrate` on the PATH) |
 | `camera_frames` | optical frames in MC-Calib order |
 | `hand_eye_mode` | `estimate` or `urdf_cube` |
 | `cube_board_axes` | outward axis of each board in the cube frame: URDF cross-check, required by `urdf_cube` |
-| `fixed_cameras_template`, `fixed_cameras_out` | result in the `fixed_cameras` format |
+| `fixed_cameras_out` | also copy the result (`fixed_cameras` format) there |
 | `previous_extrinsics` | `cams_extrinsics.yml` of a previous calibration: keep only poses predicted visible by ≥ `min_cameras` |
 | `evaluate`, `evaluate_compare` | quality report, optional session to compare with |
+
+### Launch arguments
+Files resolved in the installed packages, whatever the workspace location:
+
+| Launch | Argument | Default |
+|---|---|---|
+| `orchestrator.launch.py` | `mc_calib_config` | `calib_orchestrator/config/MC_Calib/calib_param_cube_femto.yml` |
+| `orchestrator.launch.py` | `fixed_cameras_template` | `prl_ur5_robot_configuration/config/fixed_cameras/dataset_collection.yaml` |
+| `rig.launch.py` | `board_config` (ChArUco corner count) | same MC-Calib config |
 
 ### `camera_rig/config/orbbec_rig.yaml`
 | Parameter | Role |
@@ -234,7 +243,6 @@ Exit code 1 on FAIL, `--json report.json` to save the report.
 | `color_width`, `color_height` | 3840 × 2160 |
 | `fps` | 5 (0 = `color_fps` of `cameras_config`): one image per still pose is enough, and 4K at 15 fps loads the network shared with the arms |
 | `sync_slop_s` | max timestamp spread between cameras (0.02 s) |
-| `board_config` | MC-Calib config used to count the ChArUco corners |
 
 The primary camera (echo) is always started last. The sync mode stored in the cameras is only compared with the file.
 Never open a secondary camera alone.
