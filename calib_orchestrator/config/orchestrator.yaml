@@ -45,7 +45,7 @@ calib_orchestrator:
 
     # MC-Calib
     data_root: /home/ros/share/calib_sessions
-    mc_calib_binary: /home/ros/share/MC-Calib/build/apps/calibrate/calibrate
+    mc_calib_binary: mc_calib_calibrate   # on the PATH (prl_docker mantis image)
     mc_calib_config: /home/ros/share/mantis_ws/src/prl_camera_calib/calib_orchestrator/config/MC_Calib/calib_param_cube_femto.yml
     intrinsics_init: ""            # "" = <session>/factory_intrinsics.yml
     # MC-Calib order: Cam_001 golf, Cam_002 foxtrot, Cam_003 echo (same as camera_rig names)

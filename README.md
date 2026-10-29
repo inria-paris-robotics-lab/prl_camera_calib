@@ -88,24 +88,21 @@ With `hand_eye_mode: urdf_cube`, Z is taken from the URDF and only X is estimate
 
 ## Installation
 
-ROS 2 Jazzy container (Ubuntu 24.04). The workspace and MC-Calib live in the shared folder (`/home/ros/share`); the
-system packages to add to the image are listed in `~/share/Dockerfile.calib_deps`.
+ROS 2 Jazzy, `prl_docker` mantis image (`robots/mantis/Dockerfile.mantis`): it installs the Python dependencies,
+pyorbbecsdk2 and MC-Calib (`mc_calib_calibrate` on the PATH). The container runs with `--network host` (cameras
+192.168.1.10/11/12 and robots).
 
+Outside this image:
 ```bash
-sudo apt install -y python3-numpy python3-scipy python3-yaml python3-opencv python3-pil ros-jazzy-pinocchio \
-    build-essential cmake libopencv-dev libopencv-contrib-dev libceres-dev libgoogle-glog-dev \
-    libboost-log-dev libboost-system-dev libeigen3-dev
+sudo apt install -y python3-numpy python3-scipy python3-yaml python3-opencv python3-pil \
+    build-essential cmake libopencv-dev libopencv-contrib-dev libceres-dev libgoogle-glog-dev libeigen3-dev \
+    libboost-log-dev libboost-system-dev libboost-test-dev
 rosdep install --from-paths src/prl_camera_calib --ignore-src -y
-
-# pyorbbecsdk: always --no-deps (otherwise pip numpy / opencv shadow the ones ROS is built against)
-pip install --user --no-deps --break-system-packages pyorbbecsdk2
-```
-The container must run with `--network host` (cameras 192.168.1.10/11/12 and robots).
-
-MC-Calib (in `~/share/MC-Calib`, the system OpenCV is enough):
-```bash
-cd ~/share/MC-Calib && mkdir -p build && cd build
-cmake -DCMAKE_BUILD_TYPE=Release .. && make -j$(nproc)
+# --no-deps: pip numpy / opencv would shadow the ones ROS is built against
+pip install --no-deps --break-system-packages pyorbbecsdk2==2.1.2
+git clone https://github.com/rameau-fr/MC-Calib.git && cd MC-Calib && git checkout 77cb043
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --target calibrate -j$(nproc)
+sudo ln -s $PWD/build/apps/calibrate/calibrate /usr/local/bin/mc_calib_calibrate
 ```
 
 Workspace:
@@ -221,7 +218,7 @@ Exit code 1 on FAIL, `--json report.json` to save the report.
 | `velocity_scaling`, `acceleration_scaling` | MoveIt scaling |
 | `payload_mass`, `payload_cog` | payload of the arm carrying the cube (kg, m in the flange frame), set on the UR before each calibration; 0 = not set |
 | `execution_retries` | retries after `CONTROL_FAILED` |
-| `mc_calib_binary`, `mc_calib_config` | MC-Calib binary and config template |
+| `mc_calib_binary`, `mc_calib_config` | MC-Calib binary (`mc_calib_calibrate` on the PATH) and config template |
 | `camera_frames` | optical frames in MC-Calib order |
 | `hand_eye_mode` | `estimate` or `urdf_cube` |
 | `cube_board_axes` | outward axis of each board in the cube frame: URDF cross-check, required by `urdf_cube` |
