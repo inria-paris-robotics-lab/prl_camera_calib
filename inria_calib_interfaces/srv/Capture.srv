@@ -1,0 +1,15 @@
+# Capture one synchronized set (all cameras) and write it to disk in the MC-Calib layout:
+#   <session_dir>/Cam_00X/<frame_name>.png  (+ depth when depth_median_frames > 0)
+# Served by camera_rig (orbbec_rig, realsense_rig).
+
+string session_dir
+string frame_name             # file stem, e.g. "000007" (MC-Calib matches frames by sorted file order)
+int32 depth_median_frames     # 0 = color only, N = median of N depth frames
+float32 settle_s              # only accept frames stamped later than (request time + settle_s)
+---
+bool success
+string message
+builtin_interfaces/Time stamp # stamp of the color set that was written
+string[] camera_names         # camera names (golf, foxtrot, echo) in MC-Calib order: Cam_001, Cam_002, ...
+string[] image_paths          # ALL files written (color + depth): the orchestrator deletes them if the pose is rejected
+int32[] charuco_corners       # detected ChArUco corners per camera (all boards), -1 = not computed

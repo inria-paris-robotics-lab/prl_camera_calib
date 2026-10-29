@@ -1,0 +1,67 @@
+calib_orchestrator:
+  ros__parameters:
+    # robot / MoveIt (left arm carrying the calib-cube)
+    planning_group: left_arm
+    base_frame: prl_ur5_base       # table frame, parent of the fixed cameras
+    tool_frame: left_tool0
+    joint_names: [left_shoulder_pan_joint, left_shoulder_lift_joint, left_elbow_joint, left_wrist_1_joint, left_wrist_2_joint, left_wrist_3_joint]
+    move_action: move_action
+    pipeline_id: ompl              # or pilz_industrial_motion_planner with planner_id PTP
+    planner_id: ""
+    execution_retries: 3           # retries after CONTROL_FAILED / TIMED_OUT
+    execution_retry_delay_s: 2.0
+    velocity_scaling: 0.1
+    acceleration_scaling: 0.1
+    # payload of the arm carrying the cube, sent to the UR before each calibration (0 = keep the pendant value)
+    payload_service: /left_io_and_status_controller/set_payload
+    payload_mass: 0.2              # kg, cube + adapter
+    payload_cog: [0.0, 0.0, 0.12]  # m, flange frame
+
+    # capture: /orbbec_rig/capture (Femto Mega) or /realsense_rig/capture (RealSense)
+    capture_service: /orbbec_rig/capture
+    settle_s: 1.0                  # wait after the motion before capturing
+    motion_only: false             # reach the poses without capturing
+    depth_median_frames: 0
+    min_corners: 6                 # a camera sees the cube with >= min_corners ChArUco corners
+    min_cameras: 2                 # a pose is kept when >= min_cameras cameras see the cube
+
+    # pose generation, in base_frame (m): box of the cube center
+    workspace_center: [0.0, 0.0, 0.2]
+    workspace_half_extent: [0.50, 0.50, 0.2]
+    # tool orientations (roll pitch yaw triplets) in priority order: tool z up, then tool z down
+    tool_rpy: [0.0, 0.0, 0.0, 3.14159, 0.0, 0.0]
+    balance_orientations: true     # split the poses evenly between the tool_rpy orientations
+    max_tilt_deg: 35.0
+    max_yaw_deg: 90.0
+    cube_center_in_tool: [0.0, 0.0, 0.127]  # used only when TF tool_frame -> cube_frame is not available
+    fov_intrinsics: ""             # intrinsics of the FOV markers, "" = factory 4K (config/femto_mega)
+    fov_depth: 1.5                 # FOV pyramid length (m), 0 = hidden
+    cube_size: 0.150               # RViz cube markers (m)
+    previous_extrinsics: ""        # cams_extrinsics.yml of a previous run: keep only poses seen by >= min_cameras
+    seed: 0
+    check_ik: true                 # keep only poses with a collision-free IK
+    ik_timeout_s: 0.05
+    max_samples_per_pose: 50
+
+    # MC-Calib
+    data_root: /home/ros/share/calib_sessions
+    mc_calib_binary: /home/ros/share/MC-Calib/build/apps/calibrate/calibrate
+    mc_calib_config: /home/ros/share/mantis_ws/src/prl_camera_calib/calib_orchestrator/config/MC_Calib/calib_param_cube_femto.yml
+    intrinsics_init: ""            # "" = <session>/factory_intrinsics.yml
+    # MC-Calib order: Cam_001 golf, Cam_002 foxtrot, Cam_003 echo (same as camera_rig names)
+    camera_frames: [golf_camera_color_optical_frame, foxtrot_camera_color_optical_frame, echo_camera_color_optical_frame]
+    extrinsics_out: ""
+
+    # hand-eye: estimate (tool -> cube estimated) | urdf_cube (tool -> cube from the URDF)
+    hand_eye_mode: estimate
+    cube_frame: left_gripper_calib_tool_cube
+    cube_board_axes: "0:-y,1:+y,2:+z,3:+x,4:-x"   # outward axis of each board in cube_frame
+
+    # result in the prl_ur5_robot_configuration fixed_cameras format
+    fixed_cameras_template: /home/ros/share/mantis_ws/src/prl_ur5_robot_configuration/config/fixed_cameras/dataset_collection.yaml
+    fixed_cameras_out: ""          # set to the template path to update the robot configuration directly
+
+    # quality report after the hand-eye: <session>/evaluation.txt|json
+    evaluate: true
+    evaluate_compare: ""           # previous session of the same rig: camera displacement
+    evaluate_bootstrap: 30

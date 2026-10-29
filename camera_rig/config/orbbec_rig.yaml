@@ -1,0 +1,31 @@
+orbbec_rig:
+  ros__parameters:
+    # cameras file of prl_ur5_robot_configuration (ip, port, sync_mode, color_fps), "" = cameras_config.yaml,
+    # "none" = cameras / primary parameters
+    cameras_config: ""
+    names: [golf_camera, foxtrot_camera, echo_camera]   # MC-Calib order Cam_001, Cam_002, Cam_003
+    color_width: 3840
+    color_height: 2160
+    fps: 5                         # 0 = color_fps of cameras_config
+    enable_depth: false
+    depth_width: 640
+    depth_height: 576
+    sync_slop_s: 0.02              # max timestamp difference between cameras (s)
+    timeout_s: 5.0
+    color_buffer: 5
+    depth_buffer: 40               # >= the largest depth_median_frames
+    board_config: /home/ros/share/mantis_ws/src/prl_camera_calib/calib_orchestrator/config/MC_Calib/calib_param_cube_femto.yml
+    detect_scale: 1.0
+    stale_warn_s: 2.0
+
+    # reduced ROS streams, computed only when subscribed
+    publish_rate: 5.0              # Hz, 0 = off
+    publish_color_width: 960
+    calibration_dir: ""            # MC-Calib session with calibrated intrinsics, "" = factory
+    depth_extrinsics_file: ""      # calibrated depth -> color extrinsics, "" = factory
+    publish_depth_tf: false        # false when the URDF already has the depth frames
+
+    # ros2 run rqt_image_view rqt_image_view /orbbec_rig/preview
+    preview_rate: 2.0
+    preview_tile_width: 640
+    preview_detect: true

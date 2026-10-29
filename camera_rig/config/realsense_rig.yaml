@@ -1,0 +1,20 @@
+realsense_rig:
+  ros__parameters:
+    # cameras file of prl_ur5_robot_configuration (serials), "" = cameras_config.yaml, "none" = not read
+    cameras_config: ""
+    names: [alpha_camera, bravo_camera, charlie_camera]   # MC-Calib order, realsense2_camera camera_name
+    topic_prefix: /camera/{}
+    color_transport: compressed    # compressed | raw
+    sync_slop_s: 0.1               # no hardware sync between the RealSense
+    timeout_s: 5.0
+    color_buffer: 5
+    board_config: /home/ros/share/mantis_ws/src/prl_camera_calib/calib_orchestrator/config/MC_Calib/calib_param_cube_femto.yml
+    detect_scale: 1.0
+    stale_warn_s: 2.0
+    publish_rate: 0.0              # the driver already publishes the streams
+    calibration_dir: ""
+
+    # ros2 run rqt_image_view rqt_image_view /realsense_rig/preview
+    preview_rate: 2.0
+    preview_tile_width: 640
+    preview_detect: true

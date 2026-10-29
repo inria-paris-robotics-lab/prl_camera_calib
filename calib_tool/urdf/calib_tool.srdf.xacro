@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SRDF macros for the calib-cube "gripper" (prefix = 'left_gripper' / 'right_gripper', see mantis.srdf).
+     Links come from calib_tool.urdf.xacro called with prefix="${prefix}_" and name="calib_tool". -->
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+    <xacro:macro name="calib-cube_group_define" params="group_name prefix">
+        <group name="${group_name}">
+            <link name="${prefix}_calib_tool_adapter"/>
+            <link name="${prefix}_calib_tool_cube"/>
+            <link name="${prefix}_grasp_frame"/>
+        </group>
+    </xacro:macro>
+
+    <xacro:macro name="calib-cube_autocol" params="prefix">
+        <disable_collisions link1="${prefix}_calib_tool_adapter" link2="${prefix}_calib_tool_cube" reason="Adjacent"/>
+    </xacro:macro>
+
+    <xacro:macro name="calib-cube_col_with" params="prefix link">
+        <disable_collisions link1="${prefix}_calib_tool_adapter" link2="${link}" reason="Never"/>
+        <disable_collisions link1="${prefix}_calib_tool_cube" link2="${link}" reason="Never"/>
+    </xacro:macro>
+</robot>

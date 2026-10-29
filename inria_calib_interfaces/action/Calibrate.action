@@ -1,0 +1,22 @@
+# Robot-driven multi-camera calibration: move the cube held by the UR through a set of poses,
+# capture at each pose, then run MC-Calib and the robot-world / hand-eye calibration.
+
+string session_dir            # empty = <data_root>/session_<date>
+string poses_file             # yaml of joint configurations to replay; empty = generate poses
+int32 num_poses               # number of poses to generate (ignored when poses_file is set)
+bool dry_run                  # plan only: no execution, no capture
+bool run_calibration          # run MC-Calib + hand-eye at the end
+---
+bool success
+string message
+string session_dir
+int32 poses_captured
+float64 mean_reprojection_px  # MC-Calib, -1 if not run
+float64 hand_eye_residual_mm  # mean cube position residual of the robot-world calibration, -1 if not run
+string extrinsics_file        # cams_extrinsics.yml: base_frame -> camera optical frames
+---
+string stage                  # planning | moving | settling | capturing | calibrating | hand_eye
+int32 pose_index
+int32 num_poses
+int32 poses_captured
+int32[] charuco_corners       # per camera at the last capture
